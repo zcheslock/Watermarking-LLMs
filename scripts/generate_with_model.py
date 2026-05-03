@@ -29,6 +29,8 @@ MODEL_NAME = "gpt2"
 MAX_NEW_TOKENS = 100
 TEMPERATURE = 0.8
 TOP_K = 50
+DEFAULT_GAMMA = 0.5
+DEFAULT_DELTA = 2.0
 
 torch.set_num_threads(1)
 
@@ -40,7 +42,7 @@ class WatermarkLogitsProcessor(LogitsProcessor):
         for batch_index in range(input_ids.shape[0]):
             green_token_ids = self.watermark.greenlist_tensor(
                 input_ids[batch_index],
-                device=scores.device,
+                device="cpu", #"scores.device"
             )
             scores[batch_index, green_token_ids] += self.watermark.config.delta
         return scores
@@ -62,6 +64,19 @@ def parse_args() -> argparse.Namespace:
         default=MAX_NEW_TOKENS,
         help=f"Number of tokens to generate. Default: {MAX_NEW_TOKENS}",
     )
+    parser.add_argument(
+        "--gamma",
+        type=float,
+        default=0.5,
+        help=f"Gamma parameter for model generation. Default: {DEFAULT_GAMMA}",
+    )
+    parser.add_argument(
+        "--delta",
+        type=float,
+        default=2.0,
+        help=f"Delta parameter for model generation. Default: {DEFAULT_DELTA}",
+    )
+
     return parser.parse_args()
 
 def pick_device() -> str:
@@ -84,7 +99,7 @@ def main() -> None:
     inputs = tokenizer(args.prompt, return_tensors="pt").to(device)
     watermark = Watermark(
         vocab_size=len(tokenizer),
-        config=WatermarkConfig(gamma=0.5, delta=2.0, hash_key=15_485_863),
+        config=WatermarkConfig(gamma=args.gamma, delta=args.delta, hash_key=15_485_863),
     )
 
     with torch.inference_mode():
