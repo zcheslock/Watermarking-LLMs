@@ -45,9 +45,10 @@ def sample_from_logits(logits: Sequence[float], rng: Random) -> int:
 
 
 class Watermark:
-    def __init__(self, vocab_size: int, config: WatermarkConfig | None = None) -> None:
+    def __init__(self, vocab_size: int, config: WatermarkConfig | None = None, device: str = "cpu") -> None:
         self.vocab_size = vocab_size
         self.config = config or WatermarkConfig()
+        self.device = device
 
     def greenlist_size(self) -> int:
         return int(self.vocab_size * self.config.gamma)
@@ -71,7 +72,7 @@ class Watermark:
         return permutation[self.vocab_size - greenlist_size :]
 
     def greenlist(self, prefix_tokens: Sequence[int]) -> list[int]:
-        return self.greenlist_tensor(prefix_tokens, device="cpu").tolist()
+        return self.greenlist_tensor(prefix_tokens, device=self.device).tolist()
 
     def is_green_token(self, token_id: int, prefix_tokens: Sequence[int]) -> bool:
         green_tokens = self.greenlist(prefix_tokens)
