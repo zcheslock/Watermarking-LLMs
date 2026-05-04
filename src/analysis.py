@@ -55,6 +55,7 @@ def run_watermark(prompt : str, model : str = "gpt2", max_new_tokens : int = 100
     watermark = Watermark(
         vocab_size=len(tokenizer),
         config=WatermarkConfig(gamma=gamma, delta=delta, hash_key=15_485_863),
+        device=device
     )
 
     with torch.inference_mode():
