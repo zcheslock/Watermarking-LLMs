@@ -37,7 +37,7 @@ class WatermarkLogitsProcessor(LogitsProcessor):
         return scores
 
 
-def run_watermark(prompt : str, model : str = "gpt2", max_new_tokens : int = 100, top_k : int = 50, 
+def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int = 100, top_k : int = 50, 
                   gamma : float = 0.5, delta : float = 2.0, temperature : float = 0.8, analysis_token_step : int = 0) -> list[dict]:
     
 
@@ -45,8 +45,8 @@ def run_watermark(prompt : str, model : str = "gpt2", max_new_tokens : int = 100
 
     device = pick_device()
 
-    tokenizer = AutoTokenizer.from_pretrained(model)
-    model = AutoModelForCausalLM.from_pretrained(model).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name, tie_word_embeddings=False).to(device)
 
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -81,7 +81,7 @@ def run_watermark(prompt : str, model : str = "gpt2", max_new_tokens : int = 100
     #Given a step size [x], analyze the output generation for length x,2x,3x,...
     #Essentially, consider the first n tokens generated as a sequence of length n, for n = x,2x,3x,...
     #Significantly more efficient than generating a different sequence of each length
-    for num_tokens in range(analysis_token_step,generated_tokens,analysis_token_step):
+    for num_tokens in range(analysis_token_step,generated_tokens + 1,analysis_token_step):
         scored_ids = output[0, prompt_length - 1 :prompt_length + num_tokens].tolist()
         analysis = watermark.detect(scored_ids)
 
