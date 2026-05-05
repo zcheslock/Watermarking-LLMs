@@ -10,6 +10,9 @@ from transformers import (
     LogitsProcessorList,
 )
 
+from datasets import load_dataset
+
+
 from watermarking_llms import Watermark, WatermarkConfig
 
 def pick_device() -> str:
@@ -119,6 +122,24 @@ def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int 
 
     
     return results
+
+
+def sample_c4_prompts(n_prompts: int, min_tokens: int = 50, model_name: str = "facebook/opt-1.3b"):
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    
+    dataset = load_dataset("allenai/c4", "en", split="train[:200]")
+    
+    prompts = []
+    for example in dataset:
+        tokens = tokenizer(example["text"], return_tensors="pt")["input_ids"][0]
+        if len(tokens) >= min_tokens + 200:  # ensure enough tokens for prompt + 200 token completion
+            prompt_tokens = tokens[:min_tokens]
+            prompt_text = tokenizer.decode(prompt_tokens, skip_special_tokens=True)
+            prompts.append(prompt_text)
+        if len(prompts) >= n_prompts:
+            break
+    
+    return prompts
 
 
 def output_file_setup(outputfile: str):
