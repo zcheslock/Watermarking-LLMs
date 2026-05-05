@@ -127,7 +127,9 @@ def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int 
 def sample_c4_prompts(n_prompts: int, min_tokens: int = 50, model_name: str = "facebook/opt-1.3b"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
-    dataset = load_dataset("allenai/c4", "en", split="train[:200]")
+    print("Begin loading c4 dataset for sampling...")
+    dataset = load_dataset("allenai/c4", "en", split="train", streaming=True)
+    print("Dataset loaded for sampling.")
     
     prompts = []
     for example in dataset:
