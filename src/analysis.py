@@ -60,7 +60,7 @@ def continuation_perplexity(token_losses: list[float], num_tokens: int) -> float
     return exp(sum(token_losses[:num_tokens]) / num_tokens)
 
 def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int = 100, top_k : int = 50, 
-                  gamma : float = 0.5, delta : float = 2.0, temperature : float = 0.8, analysis_token_step : int = 0) -> list[dict]:
+                  gamma : float = 0.5, delta : float = 2.0, temperature : float = 0.8, analysis_token_step : int = 0, z_threshold : float = None) -> list[dict]:
     
 
     results = []
@@ -105,7 +105,7 @@ def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int 
     #Significantly more efficient than generating a different sequence of each length
     for num_tokens in range(analysis_token_step,generated_tokens + 1,analysis_token_step):
         scored_ids = output[0, prompt_length - 1 :prompt_length + num_tokens].tolist()
-        analysis = watermark.detect(scored_ids)
+        analysis = watermark.detect(scored_ids, z_threshold=z_threshold)
 
         result = {
         "generated_tokens": num_tokens,
