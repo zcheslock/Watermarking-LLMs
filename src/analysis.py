@@ -1,12 +1,8 @@
-import os
-import sys
-from pathlib import Path
 import csv
-from datetime import datetime
-from zoneinfo import ZoneInfo
-
+from math import exp
 
 import torch
+import torch.nn.functional as F
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -36,6 +32,29 @@ class WatermarkLogitsProcessor(LogitsProcessor):
             scores[batch_index, green_token_ids] += self.watermark.config.delta
         return scores
 
+
+def continuation_token_losses(
+    model: AutoModelForCausalLM,
+    full_ids: torch.LongTensor,
+    prompt_length: int,
+) -> list[float]:
+    with torch.inference_mode():
+        outputs = model(full_ids)
+
+    shift_logits = outputs.logits[:, :-1, :].contiguous()
+    shift_labels = full_ids[:, 1:].contiguous()
+    token_losses = F.cross_entropy(
+        shift_logits.view(-1, shift_logits.size(-1)),
+        shift_labels.view(-1),
+        reduction="none",
+    )
+    continuation_start = prompt_length - 1
+    continuation_length = full_ids.shape[1] - prompt_length
+    return token_losses[continuation_start : continuation_start + continuation_length].tolist()
+
+
+def continuation_perplexity(token_losses: list[float], num_tokens: int) -> float:
+    return exp(sum(token_losses[:num_tokens]) / num_tokens)
 
 def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int = 100, top_k : int = 50, 
                   gamma : float = 0.5, delta : float = 2.0, temperature : float = 0.8, analysis_token_step : int = 0) -> list[dict]:
@@ -73,7 +92,7 @@ def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int 
     prompt_length = inputs["input_ids"].shape[1]
     continuation_ids = output[0, prompt_length:].tolist()
     generated_tokens = len(continuation_ids)
-
+    token_losses = continuation_token_losses(model, output, prompt_length)
 
     if analysis_token_step == 0:
          analysis_token_step = generated_tokens
@@ -89,6 +108,7 @@ def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int 
         "generated_tokens": num_tokens,
         "gamma": gamma,
         "delta": delta,
+        "perplexity": continuation_perplexity(token_losses, num_tokens),
         "green_fraction": analysis.green_fraction,
         "z_score": analysis.z_score,
         "p_value": analysis.p_value,
@@ -101,8 +121,8 @@ def run_watermark(prompt : str, model_name : str = "gpt2", max_new_tokens : int 
     return results
 
 
-def output_file_setup(outputfile : str):
-    header = ["generated_tokens", "gamma", "delta", "green_fraction", "z_score", "p_value", "prediction"]
+def output_file_setup(outputfile: str):
+    header = ["generated_tokens", "gamma", "delta", "perplexity", "green_fraction", "z_score", "p_value", "prediction"]
 
     with open(outputfile, "w", newline="") as f:
         writer = csv.writer(f)
@@ -110,10 +130,8 @@ def output_file_setup(outputfile : str):
 
 
 def write_results(outputfile : str, results : list[dict]):
-    fields = ["generated_tokens", "gamma", "delta", "green_fraction", "z_score", "p_value", "prediction"]
+    fields = ["generated_tokens", "gamma", "delta", "perplexity", "green_fraction", "z_score", "p_value", "prediction"]
     with open(outputfile, "a", newline="") as f:
+        writer = csv.writer(f)
         for result in results:
-            row = [result[field] for field in fields]
-            writer = csv.writer(f)
-            writer.writerow(row)
-
+            writer.writerow([result[field] for field in fields])
