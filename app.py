@@ -300,7 +300,7 @@ with gr.Blocks() as demo:
     attempts = gr.State(0)
 
     username_input = gr.Textbox(label="Username", placeholder="your_name")
-    model_input = gr.Dropdown(label="Model", choices=MODEL_CHOICES, value=SIMPLE_MODEL_NAME)
+    model_input = gr.Dropdown(label="Model", choices=MODEL_CHOICES, value=LLAMA_MODEL_NAME)
     num_rounds_input = gr.Dropdown(label="Rounds", choices=[1, 2, 3, 5, 10, 15, 20], value=5)
     gamma_input = gr.Slider(
         label="Gamma",
@@ -404,5 +404,5 @@ if __name__ == "__main__":
         max_threads=1,
         theme=gr.themes.Monochrome(),
         server_port=int(os.environ.get("GRADIO_SERVER_PORT", "7861")),
-        # share=True,
+        share=True,
     )
