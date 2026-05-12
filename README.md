@@ -12,13 +12,14 @@ This repo focuses on building the watermarking and detection pipeline from scrat
 
 * * *
 
-The main result reproduced here is the paper's core claim that watermark detectability increases with generation length and with stronger watermark settings, while remaining measurable through a simple statistical detector. In this repo, that result is reflected by the `z_score_vs_T_varying_delta.png`, `z_score_vs_T_varying_gamma.png`, and `tpr_fpr_table_v2.png` artifacts inside `results/`.
+The main result reproduced here is the paper's core claim that watermark detectability increases with generation length and with stronger watermark settings, while remaining measurable through a simple statistical detector. In this repo, that result is reflected by the `z_score_vs_T_varying_delta.png`, `z_score_vs_T_varying_gamma.png`, and `FINAL_tpr_fpr_table.png` artifacts inside `results/`.
 
 The re-implementation is centered on the watermark detection statistic introduced in the paper's one-proportion z-test discussion, where larger z-scores provide stronger evidence that a sequence was generated with watermark knowledge rather than by an unwatermarked source.
 
 ![Z-score vs T for varying delta](results/zscore_vs_T_varying_delta.png)
 
 ![Z-score vs T for varying gamma](results/zscore_vs_T_varying_gamma.png)
+
 
 ## GITHUB CONTENTS
 
