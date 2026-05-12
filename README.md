@@ -20,16 +20,15 @@ The re-implementation is centered on the watermark detection statistic introduce
 
 ![Z-score vs T for varying gamma](results/zscore_vs_T_varying_gamma.png)
 
-
 ## GITHUB CONTENTS
 
 * * *
 
 This project is organized around the main implementation, experiment artifacts, and submission materials:
-
-- `src/` contains the watermark implementation and analysis utilities.
-- `scripts/` contains the main CLI entrypoint used to generate and score watermarked text.
-- `app.py` provides a Gradio demo for an interactive watermark identification game.
+- `code/` contains our code, but more specifically:
+- `code/src/` contains the watermark implementation and analysis utilities.
+- `code/scripts/` contains the main CLI entrypoint used to generate and score watermarked text.
+- `code/app.py` provides a Gradio demo for an interactive watermark identification game.
 - `data/` contains CSV outputs used to summarize and plot experiment behavior.
 - `results/` contains generated figures comparing watermark strength, sequence length, and detection behavior.
 - `poster/` contains the PDF used for the in-class project poster presentation.
