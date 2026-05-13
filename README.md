@@ -75,11 +75,9 @@ python scripts/generate_with_model.py "The future of language models is"
 python app.py
 ```
 
-The app launches a Gradio interface where users guess which of two continuations was watermarked. Aggregate game results are written to `results/game_results.csv` when uploaded from the interface.
+The app launches a Gradio interface where users guess which of two continuations was watermarked. Aggregate game results are written to `results/game_results.csv` when uploaded from the interface. Users can upload the gpt2 or llama 3.2B models to run the game. Features include usernames, exporting, adjustable rounds & gamma & delta.
 
 ![watermark game](results/watermark_game_screenshot.png)
-
-This repo is intended to run on CPU for the `gpt2` path, but local GPU or Apple Silicon acceleration will improve speed. Reproduction fidelity is limited by available hardware, local model access, and the fact that larger-model paper settings are approximated here with smaller accessible models.
 
 ## RESULTS / INSIGHTS
 
@@ -87,7 +85,7 @@ This repo is intended to run on CPU for the `gpt2` path, but local GPU or Apple 
 
 The figures currently in `results/` show the same overall qualitative pattern reported by Kirchenbauer et al.: watermark evidence becomes stronger as more tokens are generated, and stronger watermark parameter choices tend to push z-scores upward more quickly.
 
-`zscore_vs_T_varying_delta.png` and `zscore_vs_T_varying_gamma.png` visualize how detector confidence changes with sequence length `T` under different watermark settings. `FINAL_tpr_fpr_table_v2.png` summarizes the detection tradeoff more directly by comparing positive-rate behavior under thresholding. A user running this repo should expect to see measurable separation between watermarked and unwatermarked behavior, even though the exact numerical values may differ from the original paper because of model scale and experimental simplifications.
+`zscore_vs_T_varying_delta.png` and `zscore_vs_T_varying_gamma.png` visualize how detector confidence changes with sequence length `T` under different watermark settings. `tpr_fpr_table_v2.png` summarizes the detection tradeoff more directly by comparing positive-rate behavior under thresholding. A user running this repo should expect to see measurable separation between watermarked and unwatermarked behavior, even though the exact numerical values may differ from the original paper because of model scale and experimental simplifications.
 
 ![TPR / FPR summary](results/tpr_fpr_table_v2.png)
 
