@@ -77,11 +77,7 @@ python app.py
 
 The app launches a Gradio interface where users guess which of two continuations was watermarked. Aggregate game results are written to `results/game_results.csv` when uploaded from the interface.
 
-> Placeholder: add a screenshot of the game start screen here.
-
-> Placeholder: add a screenshot showing a round with Text A / Text B choices here.
-
-> Placeholder: add a screenshot of the final score or uploaded-results confirmation here.
+![watermark game](results/watermark_game_screenshot.png)
 
 This repo is intended to run on CPU for the `gpt2` path, but local GPU or Apple Silicon acceleration will improve speed. Reproduction fidelity is limited by available hardware, local model access, and the fact that larger-model paper settings are approximated here with smaller accessible models.
 
@@ -114,6 +110,6 @@ This re-implementation shows that the main watermarking idea from Kirchenbauer e
 
 * * *
 
-This project was completed as part of CS 4782. Credits to John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom Goldstein for the original watermarking paper that motivated this re-implementation.
+This project was completed as part of CS 4782. Credits to John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom Goldstein for the original watermarking paper that motivated this re-implementation. We also send a big thanks to our professors Kilian Weinberger and Wei-Chiu Ma for a great semester!
 
 This repository reflects group work by Alex Joos, Zach Cheslock, and Andre as part of the course final project.
