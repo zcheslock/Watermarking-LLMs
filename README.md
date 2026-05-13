@@ -110,4 +110,4 @@ This re-implementation shows that the main watermarking idea from Kirchenbauer e
 
 This project was completed as part of CS 4782. Credits to John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom Goldstein for the original watermarking paper that motivated this re-implementation. We also send a big thanks to our professors Kilian Weinberger and Wei-Chiu Ma for a great semester!
 
-This repository reflects group work by Alex Joos, Zach Cheslock, and Andre as part of the course final project.
+This repository reflects group work by Alex Joos, Zach Cheslock, and Andre Oganesian as part of the course final project.
